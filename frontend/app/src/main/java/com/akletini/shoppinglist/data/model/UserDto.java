@@ -22,6 +22,8 @@ public class UserDto implements Serializable {
     private String username;
     @SerializedName("password")
     private String password;
+    @SerializedName("email")
+    private String email;
     @SerializedName("staySignedIn")
     private Boolean staySignedIn;
     @SerializedName("signedIn")
@@ -29,12 +31,13 @@ public class UserDto implements Serializable {
 
     public UserDto() {}
 
-    public UserDto(Long id, String username, String password, Boolean staySignedIn, Boolean signedIn) {
+    public UserDto(Long id, String username, String password, Boolean staySignedIn, Boolean signedIn, String email) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.staySignedIn = staySignedIn;
         this.signedIn = signedIn;
+        this.email = email;
     }
 
     public Long getId() {
@@ -76,4 +79,9 @@ public class UserDto implements Serializable {
     public void setSignedIn(Boolean signedIn) {
         this.signedIn = signedIn;
     }
+
+    public String getEmail() {return email;}
+
+    public void setEmail(String email) { this.email = email;}
+
 }

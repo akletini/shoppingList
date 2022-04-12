@@ -1,5 +1,6 @@
-package com.akletini.shoppinglist.ui;
+package com.akletini.shoppinglist.ui.login;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.akletini.shoppinglist.data.model.UserDto;
@@ -15,10 +16,7 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
 
 import com.akletini.shoppinglist.R;
 
@@ -33,8 +31,6 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
-
         MaterialButton loginButton = findViewById(R.id.loginButton);
 
         loginButton.setOnClickListener(new View.OnClickListener() {
@@ -62,6 +58,15 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 }
 
+            }
+        });
+
+        Intent intent = new Intent(this, CreateAccountActivity.class);
+        TextView createAccountTextView = findViewById(R.id.registerAccount);
+        createAccountTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(intent);
             }
         });
 

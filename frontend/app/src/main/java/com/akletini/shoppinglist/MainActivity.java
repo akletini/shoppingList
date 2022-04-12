@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
-import com.akletini.shoppinglist.ui.LoginActivity;
+import com.akletini.shoppinglist.ui.login.LoginActivity;
 
 public class MainActivity extends AppCompatActivity {
 

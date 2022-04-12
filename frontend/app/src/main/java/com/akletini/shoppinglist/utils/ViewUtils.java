@@ -14,4 +14,5 @@ public class ViewUtils {
     public static Boolean checkBoxToBoolean(CheckBox checkBox) {
         return checkBox.isChecked();
     }
+
 }
