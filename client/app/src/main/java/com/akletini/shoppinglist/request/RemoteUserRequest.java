@@ -10,7 +10,7 @@ import com.akletini.shoppinglist.data.datastore.LoggedInUserSingleton;
 import com.akletini.shoppinglist.data.model.UserDto;
 import com.akletini.shoppinglist.ui.login.LoginActivity;
 import com.akletini.shoppinglist.ui.trip.TripHomeActivity;
-import com.akletini.shoppinglist.utils.ErrorUtils;
+import com.akletini.shoppinglist.utils.HTTPUtils;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -61,7 +61,7 @@ public class RemoteUserRequest {
 
         final StringRequest request = new StringRequest(Request.Method.GET, url, response -> textView.setVisibility(View.INVISIBLE), error -> {
             Toast.makeText(context,
-                    ErrorUtils.buildErrorFromHTTPResponse(error),
+                    HTTPUtils.buildErrorFromHTTPResponse(error),
                     Toast.LENGTH_SHORT).show();
             textView.setVisibility(View.VISIBLE);
             textView.requestFocus();

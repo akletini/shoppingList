@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item
-        android:id="@+id/menuUsername"
-        android:title=""/>
+    <group android:id="@+id/menuGroupUsername">
+        <item
+            android:id="@+id/menuUsername"
+            android:title="" />
+    </group>
 
-    <item
-        android:id="@+id/first_item"
-        android:title="First Item" />
+    <group android:id="@+id/menuGroupStructureEditors">
+        <item
+            android:id="@+id/menuItemArticles"
+            android:title="Articles" />
 
-    <item
-        android:id="@+id/second_item"
-        android:title="Second Item" />
-
+        <item
+            android:id="@+id/menuItemMarkets"
+            android:title="Markets" />
+    </group>
 
 </menu>

@@ -29,6 +29,6 @@ public class ItemList {
     @ManyToOne
     @JoinColumn(name = "marketId")
     private Market market;
-    private Date creationDate;
+    private String creationDate;
     private User owner;
 }

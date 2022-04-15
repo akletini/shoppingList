@@ -4,7 +4,6 @@ import com.akletini.shoppinglist.auth.UserRepository;
 import com.akletini.shoppinglist.auth.entity.User;
 import com.akletini.shoppinglist.auth.service.EncryptionService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +33,7 @@ public class AuthenticationController {
     }
 
     @PostMapping(value = "/loginUser", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity loginUser(@RequestBody User user){
+    public ResponseEntity loginUser(@RequestBody User user) {
         if (user == null) {
             return new ResponseEntity("Invalid object", HttpStatus.BAD_REQUEST);
         }
@@ -57,7 +56,7 @@ public class AuthenticationController {
         final User user = userRepository.findByUsername(username);
         if (user != null) {
             user.setSignedIn(false);
-            return ResponseEntity.ok().body("User "  + username + " logged out");
+            return ResponseEntity.ok().body("User " + username + " logged out");
         }
         return ResponseEntity.badRequest().body("Found no user with username: " + username);
     }
@@ -81,7 +80,7 @@ public class AuthenticationController {
     }
 
     @GetMapping("/getUsers")
-    public Iterable<User> getUsers(){
+    public Iterable<User> getUsers() {
         return userRepository.findAll();
     }
 
