@@ -9,10 +9,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
-import com.akletini.shoppinglist.data.datastore.LoggedInUserSingleton;
 import com.akletini.shoppinglist.request.RemoteUserRequest;
 import com.akletini.shoppinglist.ui.login.LoginActivity;
-import com.akletini.shoppinglist.ui.trip.TripHomeActivity;
 
 import org.json.JSONException;
 
@@ -32,16 +30,15 @@ public class MainActivity extends AppCompatActivity {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+        } else {
+            Intent intent = new Intent(this, LoginActivity.class);
+            TextView helloWorld = findViewById(R.id.helloWorld);
+            helloWorld.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    startActivity(intent);
+                }
+            });
         }
-        Intent intent = new Intent(this, LoginActivity.class);
-
-
-        TextView helloWorld = findViewById(R.id.helloWorld);
-        helloWorld.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(intent);
-            }
-        });
     }
 }

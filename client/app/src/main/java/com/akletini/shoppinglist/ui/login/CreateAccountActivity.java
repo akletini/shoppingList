@@ -1,16 +1,17 @@
 package com.akletini.shoppinglist.ui.login;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.akletini.shoppinglist.R;
 import com.akletini.shoppinglist.data.model.UserDto;
 import com.akletini.shoppinglist.request.LoginRequest;
+import com.akletini.shoppinglist.request.RemoteUserRequest;
 import com.akletini.shoppinglist.utils.ValidationUtils;
 import com.akletini.shoppinglist.utils.ViewUtils;
 import com.google.android.material.button.MaterialButton;
@@ -20,12 +21,12 @@ import org.json.JSONException;
 public class CreateAccountActivity extends AppCompatActivity {
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_account);
 
-        EditText emailEditText = findViewById(R.id.emailEditText);
-        TextView wrongEmailFormat = findViewById(R.id.wrongEmailFormat);
+        final EditText emailEditText = findViewById(R.id.emailEditText);
+        final TextView wrongEmailFormat = findViewById(R.id.wrongEmailFormat);
 
         emailEditText.setOnFocusChangeListener((view, b) -> {
             if (emailEditText.getText().length() > 0 && !ValidationUtils.validateEmail(emailEditText.getText().toString())) {
@@ -34,16 +35,16 @@ public class CreateAccountActivity extends AppCompatActivity {
                 wrongEmailFormat.setVisibility(View.INVISIBLE);
             }
         });
-        EditText usernameEditText = findViewById(R.id.usernameEditText);
-        TextView usernameAlreadyTaken = findViewById(R.id.usernameAlreadyTaken);
+        final EditText usernameEditText = findViewById(R.id.usernameEditText);
+        final TextView usernameAlreadyTaken = findViewById(R.id.usernameAlreadyTaken);
         usernameEditText.setOnFocusChangeListener((view, b) -> {
             if (usernameEditText.getText().length() > 0) {
-                LoginRequest.remoteUserExistsRequest(getApplicationContext(), ViewUtils.textViewToString(usernameEditText), usernameAlreadyTaken);
+                RemoteUserRequest.remoteUserExistsRequest(getApplicationContext(), ViewUtils.textViewToString(usernameEditText), usernameAlreadyTaken);
             }
         });
-        EditText passwordEditText = findViewById(R.id.passwordEditText);
-        EditText repeatPasswordEditText = findViewById(R.id.repeatPasswordEditText);
-        TextView passwordsNotMatching = findViewById(R.id.passwordsDifferent);
+        final EditText passwordEditText = findViewById(R.id.passwordEditText);
+        final EditText repeatPasswordEditText = findViewById(R.id.repeatPasswordEditText);
+        final TextView passwordsNotMatching = findViewById(R.id.passwordsDifferent);
         repeatPasswordEditText.setOnFocusChangeListener((view, b) -> {
             if (repeatPasswordEditText.getText().length() > 0 && !repeatPasswordEditText.getText().toString().equals(passwordEditText.getText().toString())) {
                 passwordsNotMatching.setVisibility(View.VISIBLE);
@@ -53,27 +54,27 @@ public class CreateAccountActivity extends AppCompatActivity {
         });
 
 
-        MaterialButton signUpButton = findViewById(R.id.loginButton);
+        final MaterialButton signUpButton = findViewById(R.id.loginButton);
         signUpButton.setOnClickListener(view -> {
-            boolean noErrors = wrongEmailFormat.getVisibility() == View.INVISIBLE
+            final boolean noErrors = wrongEmailFormat.getVisibility() == View.INVISIBLE
                     && passwordsNotMatching.getVisibility() == View.INVISIBLE
                     && usernameAlreadyTaken.getVisibility() == View.INVISIBLE;
 
-            boolean fieldsEmpty = ViewUtils.textViewToString(usernameEditText).isEmpty()
+            final boolean fieldsEmpty = ViewUtils.textViewToString(usernameEditText).isEmpty()
                     && ViewUtils.textViewToString(emailEditText).isEmpty()
                     && ViewUtils.textViewToString(passwordEditText).isEmpty()
                     && ViewUtils.textViewToString(repeatPasswordEditText).isEmpty();
 
             if (noErrors && !fieldsEmpty) {
-                UserDto requestUserDto = new UserDto();
+                final UserDto requestUserDto = new UserDto();
                 requestUserDto.setUsername(ViewUtils.textViewToString(usernameEditText));
                 requestUserDto.setEmail(ViewUtils.textViewToString(emailEditText));
-                requestUserDto.setStaySignedIn(true);
+                requestUserDto.setStaySignedIn(false);
                 requestUserDto.setPassword(ViewUtils.textViewToString(repeatPasswordEditText));
 
                 try {
                     LoginRequest.remoteUserCreateRequest(getApplicationContext(), requestUserDto);
-                } catch (JSONException e) {
+                } catch (final JSONException e) {
                     e.printStackTrace();
                 }
             } else {

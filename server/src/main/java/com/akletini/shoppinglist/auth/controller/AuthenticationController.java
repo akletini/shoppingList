@@ -44,11 +44,22 @@ public class AuthenticationController {
             boolean correctPassword = encryptionService.arePasswordsEqual(userFromDB.getPassword(), user.getPassword());
             if (correctPassword) {
                 userFromDB.setSignedIn(true);
+                userFromDB.setStaySignedIn(user.getStaySignedIn());
                 final User loggedInUser = userRepository.save(userFromDB);
                 return ResponseEntity.ok().body(loggedInUser);
             }
         }
         return new ResponseEntity("Login failed", HttpStatus.BAD_REQUEST);
+    }
+
+    @PostMapping(value = "/logoutUser/{username}")
+    public ResponseEntity<String> logoutUser(@PathVariable String username) {
+        final User user = userRepository.findByUsername(username);
+        if (user != null) {
+            user.setSignedIn(false);
+            return ResponseEntity.ok().body("User "  + username + " logged out");
+        }
+        return ResponseEntity.badRequest().body("Found no user with username: " + username);
     }
 
     @GetMapping("/userExists/{username}")
