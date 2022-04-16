@@ -2,7 +2,13 @@ package com.akletini.shoppinglist.utils;
 
 import com.android.volley.VolleyError;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class HTTPUtils {
 
@@ -12,6 +18,9 @@ public class HTTPUtils {
     public static String buildErrorFromHTTPResponse(VolleyError error) {
         String body = "";
         //get status code here
+        if (error.networkResponse == null) {
+            return "Could not get a response from the server";
+        }
         String statusCode = String.valueOf(error.networkResponse.statusCode);
         //get response body and parse with appropriate encoding
         if (error.networkResponse.data != null) {
@@ -22,5 +31,17 @@ public class HTTPUtils {
             }
         }
         return "Error " + statusCode + ": " + body;
+    }
+
+    public static List<JSONObject> jsonArrayToJsonObject(JSONArray array) {
+        List<JSONObject> objects = new ArrayList<>();
+        for (int i = 0; i < array.length(); i++) {
+            try {
+                objects.add(array.getJSONObject(i));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return objects;
     }
 }

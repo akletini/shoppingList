@@ -4,11 +4,6 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 /**
  * Data class that captures user information for logged in users retrieved from LoginRepository
@@ -29,7 +24,8 @@ public class UserDto implements Serializable {
     @SerializedName("signedIn")
     private Boolean signedIn;
 
-    public UserDto() {}
+    public UserDto() {
+    }
 
     public UserDto(Long id, String username, String password, Boolean staySignedIn, Boolean signedIn, String email) {
         this.id = id;
@@ -80,8 +76,12 @@ public class UserDto implements Serializable {
         this.signedIn = signedIn;
     }
 
-    public String getEmail() {return email;}
+    public String getEmail() {
+        return email;
+    }
 
-    public void setEmail(String email) { this.email = email;}
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
 }

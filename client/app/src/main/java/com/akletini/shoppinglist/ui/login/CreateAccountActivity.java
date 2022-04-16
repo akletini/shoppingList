@@ -10,7 +10,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.akletini.shoppinglist.R;
 import com.akletini.shoppinglist.data.model.UserDto;
-import com.akletini.shoppinglist.request.LoginRequest;
 import com.akletini.shoppinglist.request.RemoteUserRequest;
 import com.akletini.shoppinglist.utils.ValidationUtils;
 import com.akletini.shoppinglist.utils.ViewUtils;
@@ -73,7 +72,7 @@ public class CreateAccountActivity extends AppCompatActivity {
                 requestUserDto.setPassword(ViewUtils.textViewToString(repeatPasswordEditText));
 
                 try {
-                    LoginRequest.remoteUserCreateRequest(getApplicationContext(), requestUserDto);
+                    RemoteUserRequest.remoteUserCreateRequest(getApplicationContext(), requestUserDto);
                 } catch (final JSONException e) {
                     e.printStackTrace();
                 }

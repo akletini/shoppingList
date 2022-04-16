@@ -1,7 +1,5 @@
 package com.akletini.shoppinglist;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,8 +7,13 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.akletini.shoppinglist.data.datastore.DataStoreRepository;
+import com.akletini.shoppinglist.request.RemoteItemRequest;
 import com.akletini.shoppinglist.request.RemoteUserRequest;
 import com.akletini.shoppinglist.ui.login.LoginActivity;
+import com.akletini.shoppinglist.ui.route.RouteHomeActivity;
 
 import org.json.JSONException;
 
@@ -39,6 +42,12 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(intent);
                 }
             });
+        }
+        DataStoreRepository dataStoreRepository = DataStoreRepository.getInstance();
+        try {
+            RemoteItemRequest.remoteItemGetAllRequest(this, RouteHomeActivity.class);
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 }
