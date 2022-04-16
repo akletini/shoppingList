@@ -1,4 +1,4 @@
-package com.akletini.shoppinglist.ui.trip;
+package com.akletini.shoppinglist.ui.route;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -16,11 +16,11 @@ import com.akletini.shoppinglist.data.model.RouteDto;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ViewHolder> {
+public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.ViewHolder> {
 
     private final List<RouteDto> routeList;
 
-    public TripAdapter(List<RouteDto> routeList) {
+    public RouteAdapter(List<RouteDto> routeList) {
         this.routeList = routeList;
     }
 
@@ -46,7 +46,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ViewHolder> {
 
     }
 
-    public List<String> getMarketsFromItemLists(List<ItemListDto> itemLists) {
+    private List<String> getMarketsFromItemLists(List<ItemListDto> itemLists) {
         List<String> marketNames = new ArrayList<>();
         for (ItemListDto itemList : itemLists) {
             marketNames.add(itemList.getMarket().getStore());
@@ -54,7 +54,7 @@ public class TripAdapter extends RecyclerView.Adapter<TripAdapter.ViewHolder> {
         return marketNames;
     }
 
-    public StringBuilder concatMarkets(List<String> markets) {
+    private StringBuilder concatMarkets(List<String> markets) {
         StringBuilder returnString = new StringBuilder();
         for (String market : markets) {
             returnString.append(market).append(", ");

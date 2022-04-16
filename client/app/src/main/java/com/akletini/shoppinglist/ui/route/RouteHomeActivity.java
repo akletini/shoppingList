@@ -1,5 +1,6 @@
-package com.akletini.shoppinglist.ui.trip;
+package com.akletini.shoppinglist.ui.route;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
@@ -18,14 +19,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.akletini.shoppinglist.R;
 import com.akletini.shoppinglist.data.datastore.LoggedInUserSingleton;
 import com.akletini.shoppinglist.data.model.RouteDto;
-import com.akletini.shoppinglist.request.LoginRequest;
+import com.akletini.shoppinglist.request.RemoteUserRequest;
+import com.akletini.shoppinglist.ui.item.ItemHomeActivity;
+import com.akletini.shoppinglist.ui.itemlist.ItemListHomeActivity;
+import com.akletini.shoppinglist.ui.market.MarketHomeActivity;
 import com.akletini.shoppinglist.utils.TestUtils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.List;
 
-public class TripHomeActivity extends AppCompatActivity {
+public class RouteHomeActivity extends AppCompatActivity {
 
     ActionBarDrawerToggle actionBarDrawerToggle;
 
@@ -33,7 +37,7 @@ public class TripHomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_trip_home);
+        setContentView(R.layout.activity_route_home);
         final DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
         Toolbar toolbar = findViewById(R.id.toolbar);
         actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, 0, 0);
@@ -45,20 +49,21 @@ public class TripHomeActivity extends AppCompatActivity {
         //TODO: Only for testing, remove after
         List<RouteDto> testRoutes = TestUtils.createTestRoutes(17);
         RecyclerView recyclerView = findViewById(R.id.route_recycler_view);
-        TripAdapter tripAdapter = new TripAdapter(testRoutes);
+        RouteAdapter routeAdapter = new RouteAdapter(testRoutes);
 
-        recyclerView.setAdapter(tripAdapter);
+        recyclerView.setAdapter(routeAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         addRouteButton.setOnClickListener(view -> {
             int lastListIndex = testRoutes.size();
             testRoutes.addAll(TestUtils.createTestRoutes(5));
-            tripAdapter.notifyItemInserted(lastListIndex);
+            routeAdapter.notifyItemInserted(lastListIndex);
         });
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
         getMenuInflater().inflate(R.menu.drawer_menu, menu);
         MenuCompat.setGroupDividerEnabled(menu, true);
         return true;
@@ -68,6 +73,7 @@ public class TripHomeActivity extends AppCompatActivity {
         NavigationView navView = findViewById(R.id.navigation_view);
         Menu menu = navView.getMenu();
         MenuItem item = menu.findItem(R.id.menuUsername);
+        menu.findItem(R.id.menuItemRoutes).setEnabled(false);
         final String username = LoggedInUserSingleton.getInstance().getCurrentUser().getUsername();
         item.setTitle(username);
     }
@@ -75,7 +81,7 @@ public class TripHomeActivity extends AppCompatActivity {
     public void setLogoutListener() {
         final TextView logout = findViewById(R.id.logout);
         logout.setOnClickListener(view -> {
-            LoginRequest.remoteUserLogoutRequest(TripHomeActivity.this, LoggedInUserSingleton.getInstance().getCurrentUser());
+            RemoteUserRequest.remoteUserLogoutRequest(RouteHomeActivity.this, LoggedInUserSingleton.getInstance().getCurrentUser());
         });
     }
 
@@ -89,4 +95,20 @@ public class TripHomeActivity extends AppCompatActivity {
     public void onBackPressed() {
         moveTaskToBack(true);
     }
+
+    public void switchToArticleEditor(final MenuItem menuItem) {
+        startActivity(new Intent(this, ItemHomeActivity.class));
+    }
+
+    public void switchToItemListEditor(final MenuItem menuItem) {
+        startActivity(new Intent(this, ItemListHomeActivity.class));
+    }
+
+    public void switchToMarketEditor(final MenuItem menuItem) {
+        startActivity(new Intent(this, MarketHomeActivity.class));
+    }
+
+    public void switchToRouteEditor(final MenuItem menuItem) {
+    }
+
 }

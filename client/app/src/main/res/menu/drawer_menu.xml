@@ -9,11 +9,23 @@
 
     <group android:id="@+id/menuGroupStructureEditors">
         <item
+            android:id="@+id/menuItemRoutes"
+            android:onClick="switchToRouteEditor"
+            android:title="Routes" />
+
+        <item
             android:id="@+id/menuItemArticles"
+            android:onClick="switchToArticleEditor"
             android:title="Articles" />
 
         <item
+            android:id="@+id/menuItemItemlist"
+            android:onClick="switchToItemListEditor"
+            android:title="Shopping Lists" />
+
+        <item
             android:id="@+id/menuItemMarkets"
+            android:onClick="switchToMarketEditor"
             android:title="Markets" />
     </group>
 

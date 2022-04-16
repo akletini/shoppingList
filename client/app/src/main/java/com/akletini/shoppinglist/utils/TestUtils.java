@@ -1,14 +1,20 @@
 package com.akletini.shoppinglist.utils;
 
+import android.content.Context;
 import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 
 import com.akletini.shoppinglist.data.datastore.LoggedInUserSingleton;
+import com.akletini.shoppinglist.data.model.ItemDto;
 import com.akletini.shoppinglist.data.model.ItemListDto;
 import com.akletini.shoppinglist.data.model.MarketDto;
 import com.akletini.shoppinglist.data.model.RouteDto;
+import com.akletini.shoppinglist.request.RemoteItemRequest;
 
+import org.json.JSONException;
+
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -43,5 +49,26 @@ public class TestUtils {
             testRoutes.add(routeDto);
         }
         return testRoutes;
+    }
+
+    public static List<ItemDto> createTestItems(int numSamples) {
+        List<ItemDto> testItems = new ArrayList<>();
+        for (int i = 0; i < numSamples; i++) {
+            ItemDto item = new ItemDto();
+            item.setName("Item_" + i);
+            item.setDescription("Description_" + i);
+            item.setPrice(new BigDecimal(21 / (i + 1)));
+            item.setAmount(50 % (i + 1));
+            testItems.add(item);
+        }
+        return testItems;
+    }
+
+    public static void test_remoteItemCreateRequest(final Context context) throws JSONException {
+        int nSamples = 1000;
+        List<ItemDto> testItems = createTestItems(1000);
+        for (int i = 0; i < nSamples; i++) {
+            RemoteItemRequest.remoteItemCreateRequest(context, testItems.get(i));
+        }
     }
 }

@@ -48,7 +48,7 @@ public class AuthenticationController {
                 return ResponseEntity.ok().body(loggedInUser);
             }
         }
-        return new ResponseEntity("Login failed", HttpStatus.BAD_REQUEST);
+        return ResponseEntity.badRequest().body("Login failed");
     }
 
     @PostMapping(value = "/logoutUser/{username}")
