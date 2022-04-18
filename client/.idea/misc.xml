@@ -3,9 +3,10 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Home/shoppingList/client/app/src/main/res/drawable/recycleview_drawable.xml" value="0.2905" />
         <entry key="..\:/Home/shoppingList/client/app/src/main/res/layout/activity_create_account.xml" value="0.5541666666666667" />
         <entry key="..\:/Home/shoppingList/client/app/src/main/res/layout/activity_item_create.xml" value="0.55" />
-        <entry key="..\:/Home/shoppingList/client/app/src/main/res/layout/activity_item_home.xml" value="0.3177083333333333" />
+        <entry key="..\:/Home/shoppingList/client/app/src/main/res/layout/activity_item_home.xml" value="0.5" />
         <entry key="..\:/Home/shoppingList/client/app/src/main/res/layout/activity_item_list_home.xml" value="0.34692028985507245" />
         <entry key="..\:/Home/shoppingList/client/app/src/main/res/layout/activity_login.xml" value="0.1" />
         <entry key="..\:/Home/shoppingList/client/app/src/main/res/layout/activity_market_home.xml" value="0.34692028985507245" />

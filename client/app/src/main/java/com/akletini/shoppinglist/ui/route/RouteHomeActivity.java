@@ -74,8 +74,10 @@ public class RouteHomeActivity extends AppCompatActivity {
         Menu menu = navView.getMenu();
         MenuItem item = menu.findItem(R.id.menuUsername);
         menu.findItem(R.id.menuItemRoutes).setEnabled(false);
-        final String username = LoggedInUserSingleton.getInstance().getCurrentUser().getUsername();
-        item.setTitle(username);
+        if (LoggedInUserSingleton.getInstance().getCurrentUser() != null) {
+            final String username = LoggedInUserSingleton.getInstance().getCurrentUser().getUsername();
+            item.setTitle(username);
+        }
     }
 
     public void setLogoutListener() {

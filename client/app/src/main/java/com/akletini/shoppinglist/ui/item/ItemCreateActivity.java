@@ -1,12 +1,16 @@
 package com.akletini.shoppinglist.ui.item;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.akletini.shoppinglist.R;
+import com.akletini.shoppinglist.data.datastore.DataStoreRepository;
+import com.akletini.shoppinglist.data.datastore.ItemDataStore;
 import com.akletini.shoppinglist.data.model.ItemDto;
 import com.akletini.shoppinglist.request.RemoteItemRequest;
 import com.akletini.shoppinglist.utils.ViewUtils;
@@ -18,26 +22,77 @@ import java.math.BigDecimal;
 
 public class ItemCreateActivity extends AppCompatActivity {
 
+    EditText itemName, itemDescription, itemAmount, itemPrice;
+    MaterialButton submitButton, deleteButton;
+    boolean isExistingItem = false;
+    long currentExistingId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_create);
+        itemName = findViewById(R.id.itemName);
+        itemDescription = findViewById(R.id.itemDescription);
+        itemAmount = findViewById(R.id.numberDisplay);
+        itemPrice = findViewById(R.id.itemPrice);
+        String callerClass = getIntent().getStringExtra("caller");
+        if (callerClass != null && (callerClass.equals("ItemHomeActivity") || callerClass.equals("ItemCreateActivity"))) {
+            initViewWithExistingItem(getIntent().getLongExtra("item_id", 0));
+            isExistingItem = true;
+        } else {
+            isExistingItem = false;
+        }
         initAmountPicker();
         initSubmitButton();
     }
 
+    private void initViewWithExistingItem(long id) {
+        ItemDataStore itemDataStore = (ItemDataStore) DataStoreRepository.getInstance().getDataStore(ItemDto.class);
+        ItemDto item = itemDataStore.getElementById(id);
+        if (item != null) {
+            itemName.setText(item.getName());
+            itemDescription.setText(item.getDescription());
+            itemAmount.setText(item.getAmount().toString());
+            itemPrice.setText(item.getPrice().toString());
+            currentExistingId = item.getId();
+        }
+    }
+
     private void initSubmitButton() {
-        MaterialButton button = findViewById(R.id.addItemButton);
-        button.setOnClickListener(view -> {
-            EditText itemPrice = findViewById(R.id.itemPrice);
+        submitButton = findViewById(R.id.addItemButton);
+        submitButton.setText(isExistingItem ? "Update" : "Add item");
+        submitButton.setOnClickListener(view -> {
             ItemDto itemDto = new ItemDto();
-            itemDto.setName(ViewUtils.textViewToString(findViewById(R.id.itemName)));
-            itemDto.setDescription(ViewUtils.textViewToString(findViewById(R.id.itemDescription)));
-            itemDto.setAmount(Integer.parseInt(ViewUtils.textViewToString(findViewById(R.id.numberDisplay))));
-            double itemPriceDouble = Double.parseDouble(itemPrice.getText().toString());
+            itemDto.setId(isExistingItem ? currentExistingId : null);
+            itemDto.setName(ViewUtils.textViewToString(itemName));
+            itemDto.setDescription(ViewUtils.textViewToString(itemDescription));
+            itemDto.setAmount(Integer.parseInt(ViewUtils.textViewToString(itemAmount)));
+            double itemPriceDouble = Double.parseDouble(ViewUtils.textViewToString(itemPrice));
             itemDto.setPrice(BigDecimal.valueOf(itemPriceDouble));
             try {
-                RemoteItemRequest.remoteItemCreateRequest(this, itemDto);
+                if (isExistingItem) {
+                    RemoteItemRequest.remoteItemModifyRequest(this, itemDto, ItemCreateActivity.class, true);
+                } else {
+                    RemoteItemRequest.remoteItemCreateRequest(this, itemDto);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        });
+
+        deleteButton = findViewById(R.id.remoteItemButton);
+        deleteButton.setEnabled(isExistingItem);
+        deleteButton.setVisibility(isExistingItem ? View.VISIBLE : View.INVISIBLE);
+        deleteButton.setOnClickListener(view -> {
+            ItemDto itemDto = new ItemDto();
+            itemDto.setId(isExistingItem ? currentExistingId : null);
+            itemDto.setName(ViewUtils.textViewToString(itemName));
+            itemDto.setDescription(ViewUtils.textViewToString(itemDescription));
+            itemDto.setAmount(Integer.parseInt(ViewUtils.textViewToString(itemAmount)));
+            double itemPriceDouble = Double.parseDouble(ViewUtils.textViewToString(itemPrice));
+            itemDto.setPrice(BigDecimal.valueOf(itemPriceDouble));
+            try {
+                RemoteItemRequest.remoteItemDeleteRequest(this, itemDto, ItemHomeActivity.class, true);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -74,5 +129,8 @@ public class ItemCreateActivity extends AppCompatActivity {
         });
     }
 
-
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(this, ItemHomeActivity.class));
+    }
 }

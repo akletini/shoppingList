@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
         }
         DataStoreRepository dataStoreRepository = DataStoreRepository.getInstance();
         try {
-            RemoteItemRequest.remoteItemGetAllRequest(this, RouteHomeActivity.class);
+            RemoteItemRequest.remoteItemGetAllRequest(this, RouteHomeActivity.class, true);
         } catch (JSONException e) {
             e.printStackTrace();
         }

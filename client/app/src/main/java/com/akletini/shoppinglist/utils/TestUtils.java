@@ -51,7 +51,7 @@ public class TestUtils {
         return testRoutes;
     }
 
-    public static List<ItemDto> createTestItems(int numSamples) {
+    private static List<ItemDto> createTestItems(int numSamples) {
         List<ItemDto> testItems = new ArrayList<>();
         for (int i = 0; i < numSamples; i++) {
             ItemDto item = new ItemDto();
@@ -65,8 +65,8 @@ public class TestUtils {
     }
 
     public static void test_remoteItemCreateRequest(final Context context) throws JSONException {
-        int nSamples = 1000;
-        List<ItemDto> testItems = createTestItems(1000);
+        int nSamples = 10;
+        List<ItemDto> testItems = createTestItems(nSamples);
         for (int i = 0; i < nSamples; i++) {
             RemoteItemRequest.remoteItemCreateRequest(context, testItems.get(i));
         }

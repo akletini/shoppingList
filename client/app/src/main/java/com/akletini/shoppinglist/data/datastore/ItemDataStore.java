@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 public class ItemDataStore implements DataStore<ItemDto> {
 
     private static ItemDataStore instance;
-    private List<ItemDto> items;
+    private final List<ItemDto> items;
 
     private ItemDataStore() {
         items = new ArrayList<>();

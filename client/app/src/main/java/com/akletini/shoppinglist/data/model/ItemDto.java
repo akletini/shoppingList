@@ -3,6 +3,7 @@ package com.akletini.shoppinglist.data.model;
 import com.google.gson.annotations.SerializedName;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 public class ItemDto {
 
@@ -78,5 +79,29 @@ public class ItemDto {
 
     public void setImage(byte[] image) {
         this.image = image;
+    }
+
+    public ItemDto copy() {
+        ItemDto copy = new ItemDto();
+        copy.setId(id);
+        copy.setAmount(amount);
+        copy.setPrice(price);
+        copy.setDescription(description);
+        copy.setName(name);
+        copy.setImage(image);
+        return copy;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ItemDto itemDto = (ItemDto) o;
+        return Objects.equals(id, itemDto.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

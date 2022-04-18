@@ -26,29 +26,56 @@
             android:text="Add Article" />
     </androidx.appcompat.widget.Toolbar>
 
+    <TextView
+        android:id="@+id/itemNameTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/toolbar"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:text="Name:" />
+
     <EditText
         android:id="@+id/itemName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/toolbar"
+        android:layout_below="@+id/itemNameTextView"
         android:layout_marginLeft="20dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="5dp"
         android:layout_marginRight="20dp"
-        android:hint="Name"
         android:inputType="text"
         android:minHeight="48dp" />
+
+    <TextView
+        android:id="@+id/itemDescriptionTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/itemName"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
+        android:text="Description:" />
 
     <EditText
         android:id="@+id/itemDescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/itemName"
-
+        android:layout_below="@+id/itemDescriptionTextView"
         android:layout_marginLeft="20dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="5dp"
         android:layout_marginRight="20dp"
-        android:hint="Username"
-        android:inputType="text" />
+        android:inputType="textMultiLine" />
+
+    <TextView
+        android:id="@+id/itemAmountTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/itemDescription"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:text="Amount:" />
 
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -58,7 +85,7 @@
         android:layout_marginLeft="20dp"
         android:layout_marginTop="20dp"
         android:layout_marginRight="20dp"
-        android:layout_below="@id/itemDescription"
+        android:layout_below="@id/itemAmountTextView"
         android:id="@+id/itemAmount"
         android:background="@android:color/transparent">
 
@@ -77,7 +104,7 @@
         <EditText
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:background="@android:color/white"
+            android:background="#dce0e6"
             android:layout_height="match_parent"
             android:text="1"
             android:textColor="@android:color/black"
@@ -98,16 +125,25 @@
             android:text="+" />
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/itemPriceTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/itemAmount"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
+        android:text="Price:" />
+
     <EditText
         android:id="@+id/itemPrice"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/itemAmount"
+        android:layout_below="@+id/itemPriceTextView"
         android:inputType="numberDecimal"
         android:layout_marginLeft="20dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginRight="20dp"
-        android:hint="Price" />
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="20dp" />
 
 
     <com.google.android.material.button.MaterialButton
@@ -116,11 +152,29 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/itemPrice"
         android:layout_centerHorizontal="true"
+
+        android:padding="15dp"
         android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
         android:text="Add item" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/remoteItemButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="15dp"
+        android:backgroundTint="#c71c10"
+        android:layout_below="@id/addItemButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        android:visibility="invisible"
+        android:enabled="false"
+        android:text="Delete" />
 
 
 </RelativeLayout>

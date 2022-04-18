@@ -50,15 +50,14 @@ public class ItemController {
         Item updatedItem = new Item();
         Optional<Item> savedItemOptional = itemRepository.findById(item.getId());
         if (savedItemOptional.isPresent()) {
-            updatedItem = savedItemOptional.get();
-            updatedItem = itemRepository.save(updatedItem);
+            updatedItem = itemRepository.save(item);
             success = true;
         }
         return success ? ResponseEntity.ok().body(updatedItem) : ResponseEntity.badRequest().body(null);
     }
 
     @PostMapping(value = "/deleteItem/{id}")
-    public ResponseEntity<String> deleteItem(@RequestBody Long id) {
+    public ResponseEntity<String> deleteItem(@PathVariable Long id) {
         if (id == null) {
             return ResponseEntity.badRequest().body(null);
         }
