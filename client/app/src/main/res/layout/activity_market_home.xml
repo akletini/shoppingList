@@ -30,10 +30,16 @@
                 android:textColor="#fff"
                 android:textSize="25sp"
                 android:textStyle="bold" />
+
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/marketSearchView"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="end" />
         </androidx.appcompat.widget.Toolbar>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/addItemButton"
+            android:id="@+id/addMarketButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:clickable="true"
@@ -45,12 +51,18 @@
             app:srcCompat="@android:drawable/ic_menu_add"
             android:focusable="true" />
 
-        <androidx.recyclerview.widget.RecyclerView
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/toolbar"
+            android:id="@+id/marketRefreshLayout">
 
-            android:id="@+id/item_recycler_view" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/toolbar"
+                android:id="@+id/market_recycler_view" />
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     </RelativeLayout>
 

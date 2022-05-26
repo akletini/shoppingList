@@ -84,4 +84,14 @@ public class UserDto implements Serializable {
         this.email = email;
     }
 
+    public UserDto copy() {
+        UserDto copy = new UserDto();
+        copy.setId(id);
+        copy.setUsername(username);
+        copy.setPassword(password);
+        copy.setEmail(email);
+        copy.setSignedIn(signedIn);
+        copy.setStaySignedIn(staySignedIn);
+        return copy;
+    }
 }

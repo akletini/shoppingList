@@ -3,17 +3,24 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Home/shoppingList/client/app/src/main/res/drawable/customborder.xml" value="0.1" />
         <entry key="..\:/Home/shoppingList/client/app/src/main/res/drawable/recycleview_drawable.xml" value="0.2905" />
         <entry key="..\:/Home/shoppingList/client/app/src/main/res/layout/activity_create_account.xml" value="0.5541666666666667" />
-        <entry key="..\:/Home/shoppingList/client/app/src/main/res/layout/activity_item_create.xml" value="0.55" />
+        <entry key="..\:/Home/shoppingList/client/app/src/main/res/layout/activity_item_create.xml" value="0.22" />
         <entry key="..\:/Home/shoppingList/client/app/src/main/res/layout/activity_item_home.xml" value="0.5" />
+        <entry key="..\:/Home/shoppingList/client/app/src/main/res/layout/activity_item_list_create.xml" value="0.2695035460992908" />
+        <entry key="..\:/Home/shoppingList/client/app/src/main/res/layout/activity_item_list_create_details.xml" value="0.25" />
         <entry key="..\:/Home/shoppingList/client/app/src/main/res/layout/activity_item_list_home.xml" value="0.34692028985507245" />
         <entry key="..\:/Home/shoppingList/client/app/src/main/res/layout/activity_login.xml" value="0.1" />
+        <entry key="..\:/Home/shoppingList/client/app/src/main/res/layout/activity_market_edit.xml" value="0.35208333333333336" />
         <entry key="..\:/Home/shoppingList/client/app/src/main/res/layout/activity_market_home.xml" value="0.34692028985507245" />
         <entry key="..\:/Home/shoppingList/client/app/src/main/res/layout/activity_route_home.xml" value="0.28306159420289856" />
         <entry key="..\:/Home/shoppingList/client/app/src/main/res/layout/activity_trip_home.xml" value="0.1" />
         <entry key="..\:/Home/shoppingList/client/app/src/main/res/layout/amount_picker_layout.xml" value="0.3177083333333333" />
+        <entry key="..\:/Home/shoppingList/client/app/src/main/res/layout/item_amount_layout.xml" value="0.67" />
         <entry key="..\:/Home/shoppingList/client/app/src/main/res/layout/item_layout.xml" value="0.2674772036474164" />
+        <entry key="..\:/Home/shoppingList/client/app/src/main/res/layout/item_list_layout.xml" value="0.3078125" />
+        <entry key="..\:/Home/shoppingList/client/app/src/main/res/layout/market_layout.xml" value="0.21331521739130435" />
         <entry key="..\:/Home/shoppingList/client/app/src/main/res/layout/route_layout.xml" value="0.33" />
         <entry key="..\:/Home/shoppingList/client/app/src/main/res/menu/drawer_menu.xml" value="0.3734375" />
         <entry key="..\:/Home/shoppingList/frontend/app/src/main/res/layout/activity_create_account.xml" value="0.3734375" />

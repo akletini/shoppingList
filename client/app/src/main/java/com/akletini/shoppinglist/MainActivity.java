@@ -11,9 +11,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.akletini.shoppinglist.data.datastore.DataStoreRepository;
 import com.akletini.shoppinglist.request.RemoteItemRequest;
+import com.akletini.shoppinglist.request.RemoteMarketRequest;
 import com.akletini.shoppinglist.request.RemoteUserRequest;
 import com.akletini.shoppinglist.ui.login.LoginActivity;
-import com.akletini.shoppinglist.ui.route.RouteHomeActivity;
 
 import org.json.JSONException;
 
@@ -45,7 +45,8 @@ public class MainActivity extends AppCompatActivity {
         }
         DataStoreRepository dataStoreRepository = DataStoreRepository.getInstance();
         try {
-            RemoteItemRequest.remoteItemGetAllRequest(this, RouteHomeActivity.class, true);
+            RemoteItemRequest.remoteItemGetAllRequest(this, null, false);
+            RemoteMarketRequest.remoteMarketGetAllRequest(this, null, false);
         } catch (JSONException e) {
             e.printStackTrace();
         }

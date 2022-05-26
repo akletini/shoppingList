@@ -96,7 +96,7 @@
             android:insetTop="0dp"
             android:insetBottom="0dp"
             android:textColor="@android:color/black"
-            android:background="@null"
+            android:backgroundTint="#c71c10"
             android:id="@+id/decrement"
             android:textStyle="bold"
             android:text="—" />
@@ -164,17 +164,17 @@
         android:id="@+id/remoteItemButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="15dp"
-        android:backgroundTint="#c71c10"
         android:layout_below="@id/addItemButton"
         android:layout_centerHorizontal="true"
         android:layout_marginStart="20dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
-        android:visibility="invisible"
+        android:backgroundTint="#c71c10"
         android:enabled="false"
-        android:text="Delete" />
+        android:padding="15dp"
+        android:text="Delete"
+        android:visibility="invisible" />
 
 
 </RelativeLayout>

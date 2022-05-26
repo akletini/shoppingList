@@ -1,11 +1,10 @@
-package com.akletini.shoppinglist.ui.item;
+package com.akletini.shoppinglist.ui.itemlist;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,35 +22,31 @@ import com.akletini.shoppinglist.data.datastore.ItemDataStore;
 import com.akletini.shoppinglist.data.datastore.LoggedInUserSingleton;
 import com.akletini.shoppinglist.data.model.ItemDto;
 import com.akletini.shoppinglist.request.RemoteUserRequest;
-import com.akletini.shoppinglist.request.SingletonRequestQueue;
-import com.akletini.shoppinglist.ui.itemlist.ItemListHomeActivity;
+import com.akletini.shoppinglist.ui.item.ItemAdapter;
+import com.akletini.shoppinglist.ui.item.ItemHomeActivity;
 import com.akletini.shoppinglist.ui.market.MarketHomeActivity;
 import com.akletini.shoppinglist.ui.route.RouteHomeActivity;
-import com.akletini.shoppinglist.utils.HTTPUtils;
-import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.JsonArrayRequest;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
-import com.google.gson.Gson;
-
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ItemHomeActivity extends AppCompatActivity implements ItemAdapter.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
+public class ItemListCreateActivity extends AppCompatActivity implements ItemAdapter.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
 
     ActionBarDrawerToggle actionBarDrawerToggle;
     SearchView searchView;
     ItemAdapter itemAdapter;
     SwipeRefreshLayout refreshLayout;
+    TextView toolbarTextView;
+    private ArrayList<ItemDto> selectedItems;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_home);
+
+        selectedItems = new ArrayList<>();
 
         final DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -63,7 +58,10 @@ public class ItemHomeActivity extends AppCompatActivity implements ItemAdapter.O
         setLogoutListener();
         FloatingActionButton addRouteButton = findViewById(R.id.addItemButton);
         addRouteButton.setOnClickListener(view -> {
-            startActivity(new Intent(this, ItemCreateActivity.class));
+            Intent intent = new Intent(this, ItemListCreateDetailsActivity.class);
+            intent.putExtra("selection", selectedItems);
+            intent.putExtra("caller", "ItemListCreateActivity");
+            startActivity(intent);
         });
         ItemDataStore dataStore = (ItemDataStore) DataStoreRepository.getDataStore(ItemDto.class);
         RecyclerView recyclerView = findViewById(R.id.item_recycler_view);
@@ -81,7 +79,6 @@ public class ItemHomeActivity extends AppCompatActivity implements ItemAdapter.O
         refreshLayout.setOnRefreshListener(this);
 
         initSearchView(itemAdapter);
-
     }
 
     @Override
@@ -92,29 +89,21 @@ public class ItemHomeActivity extends AppCompatActivity implements ItemAdapter.O
         return true;
     }
 
-    private void setDrawerMenuUsername() {
-        NavigationView navView = findViewById(R.id.navigation_view);
-        Menu menu = navView.getMenu();
-        MenuItem item = menu.findItem(R.id.menuUsername);
-        final String username = LoggedInUserSingleton.getInstance().getCurrentUser().getUsername();
-        item.setTitle(username);
-    }
-
-    private void setLogoutListener() {
-        final TextView logout = findViewById(R.id.logout);
-        logout.setOnClickListener(view -> {
-            RemoteUserRequest.remoteUserLogoutRequest(ItemHomeActivity.this, LoggedInUserSingleton.getInstance().getCurrentUser());
-        });
+    @Override
+    protected void onPostCreate(final Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        actionBarDrawerToggle.syncState();
     }
 
     private void initSearchView(ItemAdapter itemAdapter) {
         searchView = findViewById(R.id.itemSearchView);
+        toolbarTextView = findViewById(R.id.tv_toolbar_custom);
+        toolbarTextView.setText("Add Articles");
         searchView.setOnQueryTextFocusChangeListener((view, b) -> {
-            TextView toolbarTextView = findViewById(R.id.tv_toolbar_custom);
             if (!toolbarTextView.getText().equals("")) {
                 toolbarTextView.setText("");
             } else {
-                toolbarTextView.setText("Articles");
+                toolbarTextView.setText("Add Articles");
             }
         });
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -132,24 +121,23 @@ public class ItemHomeActivity extends AppCompatActivity implements ItemAdapter.O
         });
     }
 
-    @Override
-    protected void onPostCreate(final Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        actionBarDrawerToggle.syncState();
+    private void setDrawerMenuUsername() {
+        NavigationView navView = findViewById(R.id.navigation_view);
+        Menu menu = navView.getMenu();
+        MenuItem item = menu.findItem(R.id.menuUsername);
+        final String username = LoggedInUserSingleton.getInstance().getCurrentUser().getUsername();
+        item.setTitle(username);
     }
 
-    @Override
-    public void onBackPressed() {
-        if (!searchView.isIconified()) {
-            searchView.setQuery("", true);
-            searchView.setIconified(true);
-            searchView.clearFocus();
-        } else {
-            startActivity(new Intent(this, RouteHomeActivity.class));
-        }
+    private void setLogoutListener() {
+        final TextView logout = findViewById(R.id.logout);
+        logout.setOnClickListener(view -> {
+            RemoteUserRequest.remoteUserLogoutRequest(ItemListCreateActivity.this, LoggedInUserSingleton.getInstance().getCurrentUser());
+        });
     }
 
     public void switchToArticleEditor(final MenuItem menuItem) {
+        startActivity(new Intent(this, ItemHomeActivity.class));
     }
 
     public void switchToItemListEditor(final MenuItem menuItem) {
@@ -165,46 +153,18 @@ public class ItemHomeActivity extends AppCompatActivity implements ItemAdapter.O
     }
 
     @Override
-    public void onItemClick(int position) {
-        ItemDto clickedItem = itemAdapter.getItems().get(position);
-        Intent intent = new Intent(this, ItemCreateActivity.class);
-        intent.putExtra("item_id", clickedItem.getId());
-        intent.putExtra("caller", "ItemHomeActivity");
-        startActivity(intent);
+    public void onRefresh() {
+        refreshLayout.setRefreshing(false);
     }
 
+
     @Override
-    public void onRefresh() {
-        refreshLayout.setRefreshing(true);
-        final String url = SingletonRequestQueue.BASE_URL + "/item/getItems";
-
-        final RequestQueue queue = SingletonRequestQueue.getInstance(this).getRequestQueue();
-
-        final JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, url, null, response -> {
-            if (response != null) {
-                final List<JSONObject> responseList = HTTPUtils.jsonArrayToJsonObject(response);
-                final Gson gson = new Gson();
-
-                final ItemDataStore itemDataStore = (ItemDataStore) DataStoreRepository.getDataStore(ItemDto.class);
-                itemDataStore.getAllElements().clear();
-                for (JSONObject jsonObject : responseList) {
-                    ItemDto responseObject = gson.fromJson(jsonObject.toString(), ItemDto.class);
-                    itemDataStore.addElement(responseObject);
-                }
-                List<ItemDto> items = itemAdapter.getItems();
-                items.clear();
-                items.addAll(itemDataStore.getAllElements());
-                itemAdapter.notifyDataSetChanged();
-                refreshLayout.setRefreshing(false);
-            }
-        }, error -> Toast.makeText(this,
-                HTTPUtils.buildErrorFromHTTPResponse(error),
-                Toast.LENGTH_SHORT).show());
-
-        request.setRetryPolicy(new DefaultRetryPolicy(
-                0,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        queue.add(request);
+    public void onItemClick(int position) {
+        ItemDto clickedItem = itemAdapter.getItems().get(position);
+        if (!selectedItems.contains(clickedItem)) {
+            selectedItems.add(clickedItem);
+        } else {
+            selectedItems.remove(clickedItem);
+        }
     }
 }

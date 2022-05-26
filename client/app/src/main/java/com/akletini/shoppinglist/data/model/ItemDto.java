@@ -2,10 +2,11 @@ package com.akletini.shoppinglist.data.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Objects;
 
-public class ItemDto {
+public class ItemDto implements Serializable {
 
     @SerializedName("id")
     private Long id;

@@ -5,8 +5,9 @@ import android.content.Intent;
 import android.widget.Toast;
 
 import com.akletini.shoppinglist.data.datastore.DataStoreRepository;
-import com.akletini.shoppinglist.data.datastore.ItemDataStore;
-import com.akletini.shoppinglist.data.model.ItemDto;
+import com.akletini.shoppinglist.data.datastore.MarketDataStore;
+import com.akletini.shoppinglist.data.model.MarketDto;
+import com.akletini.shoppinglist.ui.market.MarketHomeActivity;
 import com.akletini.shoppinglist.utils.HTTPUtils;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -21,25 +22,26 @@ import org.json.JSONObject;
 
 import java.util.List;
 
-public class RemoteItemRequest {
+public class RemoteMarketRequest {
 
-    public static void remoteItemCreateRequest(final Context context, Class<?> targetActivityClass, final ItemDto itemDto) throws JSONException {
+    public static final String MARKET_PATH = "/market";
 
-        final String url = SingletonRequestQueue.BASE_URL + "/item/createItem";
+    public static void remoteMarketCreateRequest(Context context, MarketDto marketDto) throws JSONException {
+        final String url = SingletonRequestQueue.BASE_URL + MARKET_PATH + "/createMarket";
 
         final RequestQueue queue = SingletonRequestQueue.getInstance(context).getRequestQueue();
 
-        final String jsonObject = new Gson().toJson(itemDto);
+        final String jsonObject = new Gson().toJson(marketDto);
         final JSONObject requestObject = new JSONObject(jsonObject);
 
         final JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, requestObject, response -> {
-            final ItemDto responseObject;
+            final MarketDto responseObject;
             if (response != null) {
                 final Gson gson = new Gson();
-                responseObject = gson.fromJson(response.toString(), ItemDto.class);
-                ItemDataStore itemDataStore = (ItemDataStore) DataStoreRepository.getDataStore(ItemDto.class);
-                itemDataStore.addElement(responseObject);
-                final Intent intent = new Intent(context, targetActivityClass);
+                responseObject = gson.fromJson(response.toString(), MarketDto.class);
+                MarketDataStore marketDataStore = (MarketDataStore) DataStoreRepository.getDataStore(MarketDto.class);
+                marketDataStore.addElement(responseObject);
+                final Intent intent = new Intent(context, MarketHomeActivity.class);
                 context.startActivity(intent);
             }
         }, error -> Toast.makeText(context,
@@ -53,26 +55,26 @@ public class RemoteItemRequest {
         queue.add(request);
     }
 
-    public static void remoteItemModifyRequest(Context context, ItemDto itemDto, Class<?> targetActivityClass, boolean redirect) throws JSONException {
-        final String url = SingletonRequestQueue.BASE_URL + "/item/updateItem";
+    public static void remoteMarketModifyRequest(Context context, MarketDto marketDto, Class<?> targetActivityClass, boolean redirect) throws JSONException {
+        final String url = SingletonRequestQueue.BASE_URL + MARKET_PATH + "/updateMarket";
 
         final RequestQueue queue = SingletonRequestQueue.getInstance(context).getRequestQueue();
 
-        final String jsonObject = new Gson().toJson(itemDto);
+        final String jsonObject = new Gson().toJson(marketDto);
         final JSONObject requestObject = new JSONObject(jsonObject);
 
         final JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, url, requestObject, response -> {
-            final ItemDto responseObject;
+            final MarketDto responseObject;
             if (response != null) {
                 final Gson gson = new Gson();
-                responseObject = gson.fromJson(response.toString(), ItemDto.class);
-                ItemDataStore itemDataStore = (ItemDataStore) DataStoreRepository.getDataStore(ItemDto.class);
-                itemDataStore.modifyElement(responseObject);
+                responseObject = gson.fromJson(response.toString(), MarketDto.class);
+                MarketDataStore marketDataStore = (MarketDataStore) DataStoreRepository.getDataStore(MarketDto.class);
+                marketDataStore.modifyElement(responseObject);
                 if (redirect) {
                     final Intent intent = new Intent(context, targetActivityClass);
-                    intent.putExtra("caller", "ItemCreateActivity");
+                    intent.putExtra("caller", "MarketEditActivity");
                     assert responseObject != null;
-                    intent.putExtra("item_id", responseObject.getId());
+                    intent.putExtra("market_id", responseObject.getId());
                     intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                     context.startActivity(intent);
                 }
@@ -88,14 +90,14 @@ public class RemoteItemRequest {
         queue.add(request);
     }
 
-    public static void remoteItemDeleteRequest(Context context, ItemDto itemDto, Class<?> targetActivityClass, boolean redirect) throws JSONException {
-        final String url = SingletonRequestQueue.BASE_URL + "/item/deleteItem/" + itemDto.getId().toString();
+    public static void remoteMarketDeleteRequest(Context context, MarketDto marketDto, Class<?> targetActivityClass, boolean redirect) throws JSONException {
+        final String url = SingletonRequestQueue.BASE_URL + MARKET_PATH + "/deleteMarket/" + marketDto.getId().toString();
 
         final RequestQueue queue = SingletonRequestQueue.getInstance(context).getRequestQueue();
 
         final StringRequest request = new StringRequest(Request.Method.POST, url, response -> {
-            ItemDataStore itemDataStore = (ItemDataStore) DataStoreRepository.getDataStore(ItemDto.class);
-            itemDataStore.deleteElement(itemDto);
+            MarketDataStore marketDataStore = (MarketDataStore) DataStoreRepository.getDataStore(MarketDto.class);
+            marketDataStore.deleteElement(marketDto);
             if (redirect) {
                 final Intent intent = new Intent(context, targetActivityClass);
                 context.startActivity(intent);
@@ -111,8 +113,8 @@ public class RemoteItemRequest {
         queue.add(request);
     }
 
-    public static void remoteItemGetAllRequest(final Context context, Class<?> targetActivityClass, boolean redirect) throws JSONException {
-        final String url = SingletonRequestQueue.BASE_URL + "/item/getItems";
+    public static void remoteMarketGetAllRequest(final Context context, Class<?> targetActivityClass, boolean redirect) throws JSONException {
+        final String url = SingletonRequestQueue.BASE_URL + MARKET_PATH + "/getMarkets";
 
         final RequestQueue queue = SingletonRequestQueue.getInstance(context).getRequestQueue();
 
@@ -121,9 +123,9 @@ public class RemoteItemRequest {
                 final List<JSONObject> responseList = HTTPUtils.jsonArrayToJsonObject(response);
                 final Gson gson = new Gson();
                 for (JSONObject jsonObject : responseList) {
-                    ItemDto responseObject = gson.fromJson(jsonObject.toString(), ItemDto.class);
-                    ItemDataStore itemDataStore = (ItemDataStore) DataStoreRepository.getDataStore(ItemDto.class);
-                    itemDataStore.addElement(responseObject);
+                    MarketDto responseObject = gson.fromJson(jsonObject.toString(), MarketDto.class);
+                    MarketDataStore marketDataStore = (MarketDataStore) DataStoreRepository.getDataStore(MarketDto.class);
+                    marketDataStore.addElement(responseObject);
                 }
                 if (redirect) {
                     final Intent intent = new Intent(context, targetActivityClass);
@@ -140,6 +142,4 @@ public class RemoteItemRequest {
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         queue.add(request);
     }
-
-
 }

@@ -31,40 +31,63 @@
                 android:textSize="25dp"
                 android:textStyle="bold" />
 
-            <androidx.appcompat.widget.SearchView
-                android:id="@+id/itemSearchView"
+            <Button
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_gravity="end" />
+                android:id="@+id/itemListSubmit"
+                android:layout_gravity="right"
+                android:drawableRight="@android:drawable/ic_menu_send" />
         </androidx.appcompat.widget.Toolbar>
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/addItemListButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:layout_marginBottom="50dp"
-            android:layout_centerHorizontal="true"
-            android:layout_alignParentBottom="true"
-            android:backgroundTint="@color/cardview_light_background"
-            app:borderWidth="0dp"
-            app:srcCompat="@android:drawable/ic_menu_add"
-            android:focusable="true" />
 
-        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        <TextView
+            android:id="@+id/itemListNameTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/toolbar"
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="20dp"
+            android:text="Name:" />
+
+        <EditText
+            android:id="@+id/itemListName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/itemListNameTextView"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="20dp"
+            android:inputType="text"
+            android:minHeight="48dp" />
+
+        <TextView
+            android:id="@+id/itemListMarketTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/itemListName"
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="20dp"
+            android:text="Market:" />
+
+        <Spinner
+            android:id="@+id/itemListMarket"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/itemListMarketTextView"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="20dp"
+            android:inputType="text"
+            android:minHeight="48dp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/item_list_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/toolbar"
-            android:id="@+id/itemListRefreshLayout">
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_below="@+id/toolbar"
-
-                android:id="@+id/itemList_recycler_view" />
-
-        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+            android:paddingTop="10dp"
+            android:layout_below="@+id/itemListMarket" />
 
     </RelativeLayout>
 

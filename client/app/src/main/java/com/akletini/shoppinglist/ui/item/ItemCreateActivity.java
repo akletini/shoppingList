@@ -1,10 +1,12 @@
 package com.akletini.shoppinglist.ui.item;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -47,7 +49,7 @@ public class ItemCreateActivity extends AppCompatActivity {
     }
 
     private void initViewWithExistingItem(long id) {
-        ItemDataStore itemDataStore = (ItemDataStore) DataStoreRepository.getInstance().getDataStore(ItemDto.class);
+        ItemDataStore itemDataStore = (ItemDataStore) DataStoreRepository.getDataStore(ItemDto.class);
         ItemDto item = itemDataStore.getElementById(id);
         if (item != null) {
             itemName.setText(item.getName());
@@ -61,24 +63,7 @@ public class ItemCreateActivity extends AppCompatActivity {
     private void initSubmitButton() {
         submitButton = findViewById(R.id.addItemButton);
         submitButton.setText(isExistingItem ? "Update" : "Add item");
-        submitButton.setOnClickListener(view -> {
-            ItemDto itemDto = new ItemDto();
-            itemDto.setId(isExistingItem ? currentExistingId : null);
-            itemDto.setName(ViewUtils.textViewToString(itemName));
-            itemDto.setDescription(ViewUtils.textViewToString(itemDescription));
-            itemDto.setAmount(Integer.parseInt(ViewUtils.textViewToString(itemAmount)));
-            double itemPriceDouble = Double.parseDouble(ViewUtils.textViewToString(itemPrice));
-            itemDto.setPrice(BigDecimal.valueOf(itemPriceDouble));
-            try {
-                if (isExistingItem) {
-                    RemoteItemRequest.remoteItemModifyRequest(this, itemDto, ItemCreateActivity.class, true);
-                } else {
-                    RemoteItemRequest.remoteItemCreateRequest(this, itemDto);
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        });
+        submitButton.setOnClickListener(this::onClickSubmit);
 
         deleteButton = findViewById(R.id.remoteItemButton);
         deleteButton.setEnabled(isExistingItem);
@@ -116,6 +101,7 @@ public class ItemCreateActivity extends AppCompatActivity {
             decrement.setEnabled(true);
             int currentValue = Integer.parseInt(numberDisplay.getText().toString());
             numberDisplay.setText(String.valueOf(currentValue + 1));
+            decrement.setBackgroundColor(Color.parseColor("#c71c10"));
         });
 
         decrement.setOnClickListener(view -> {
@@ -124,6 +110,7 @@ public class ItemCreateActivity extends AppCompatActivity {
                 numberDisplay.setText(String.valueOf(currentValue - 1));
                 if (currentValue == 2) {
                     decrement.setEnabled(false);
+                    decrement.setBackgroundColor(Color.LTGRAY);
                 }
             }
         });
@@ -132,5 +119,31 @@ public class ItemCreateActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         startActivity(new Intent(this, ItemHomeActivity.class));
+    }
+
+    private void onClickSubmit(View view) {
+        ItemDto itemDto = new ItemDto();
+        itemDto.setId(isExistingItem ? currentExistingId : null);
+        String itemNameAsString = ViewUtils.textViewToString(itemName);
+        if (itemNameAsString.isEmpty()) {
+            Toast.makeText(this, "Username may not be empty", Toast.LENGTH_SHORT).show();
+            return;
+        } else {
+            itemDto.setName(itemNameAsString);
+        }
+        itemDto.setDescription(ViewUtils.textViewToString(itemDescription));
+        itemDto.setAmount(Integer.parseInt(ViewUtils.textViewToString(itemAmount)));
+        final boolean isNumberEmpty = ViewUtils.textViewToString(itemPrice).isEmpty();
+        double itemPriceDouble = Double.parseDouble(isNumberEmpty ? "0" : ViewUtils.textViewToString(itemPrice));
+        itemDto.setPrice(BigDecimal.valueOf(itemPriceDouble));
+        try {
+            if (isExistingItem) {
+                RemoteItemRequest.remoteItemModifyRequest(this, itemDto, ItemCreateActivity.class, true);
+            } else {
+                RemoteItemRequest.remoteItemCreateRequest(this, ItemHomeActivity.class, itemDto);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 }

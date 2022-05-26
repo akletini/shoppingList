@@ -41,7 +41,7 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.ViewHolder> 
 
         holder.routeName.setText(routeDto.getName());
         holder.markets.setText(concatMarkets(getMarketsFromItemLists(routeDto.getItemLists())));
-        holder.creationDate.setText(routeDto.getCreationDate().toString());
+        holder.creationDate.setText(routeDto.getCreationDate());
         holder.owner.setText(routeDto.getOwner().getUsername());
 
     }

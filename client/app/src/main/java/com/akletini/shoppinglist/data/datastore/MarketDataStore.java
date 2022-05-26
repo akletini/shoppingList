@@ -30,12 +30,17 @@ public class MarketDataStore implements DataStore<MarketDto> {
 
     @Override
     public void modifyElement(MarketDto element) {
-
+        for (MarketDto marketDto : markets) {
+            if (marketDto.getId().equals(element.getId())) {
+                int index = markets.indexOf(marketDto);
+                markets.set(index, element);
+            }
+        }
     }
 
     @Override
     public void deleteElement(MarketDto element) {
-
+        markets.remove(element);
     }
 
     @Override

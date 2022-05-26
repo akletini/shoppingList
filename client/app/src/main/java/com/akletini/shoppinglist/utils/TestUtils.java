@@ -5,12 +5,13 @@ import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 
-import com.akletini.shoppinglist.data.datastore.LoggedInUserSingleton;
 import com.akletini.shoppinglist.data.model.ItemDto;
 import com.akletini.shoppinglist.data.model.ItemListDto;
 import com.akletini.shoppinglist.data.model.MarketDto;
 import com.akletini.shoppinglist.data.model.RouteDto;
+import com.akletini.shoppinglist.data.model.UserDto;
 import com.akletini.shoppinglist.request.RemoteItemRequest;
+import com.akletini.shoppinglist.ui.login.LoginActivity;
 
 import org.json.JSONException;
 
@@ -32,7 +33,9 @@ public class TestUtils {
         for (int i = 0; i < numSamples; i++) {
             RouteDto routeDto = new RouteDto();
             routeDto.setName("Route_" + i);
-            routeDto.setOwner(LoggedInUserSingleton.getInstance().getCurrentUser());
+            UserDto userDto = new UserDto();
+            userDto.setUsername("akletini");
+            routeDto.setOwner(userDto);
             Date date = new Date();
             SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy", Locale.GERMANY);
             String stringDate = sdf.format(date);
@@ -65,10 +68,10 @@ public class TestUtils {
     }
 
     public static void test_remoteItemCreateRequest(final Context context) throws JSONException {
-        int nSamples = 10;
+        int nSamples = 15;
         List<ItemDto> testItems = createTestItems(nSamples);
         for (int i = 0; i < nSamples; i++) {
-            RemoteItemRequest.remoteItemCreateRequest(context, testItems.get(i));
+            RemoteItemRequest.remoteItemCreateRequest(context, LoginActivity.class, testItems.get(i));
         }
     }
 }
