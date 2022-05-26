@@ -6,7 +6,6 @@ import android.widget.Toast;
 
 import com.akletini.shoppinglist.data.datastore.DataStoreRepository;
 import com.akletini.shoppinglist.data.datastore.ItemListDataStore;
-import com.akletini.shoppinglist.data.model.ItemDto;
 import com.akletini.shoppinglist.data.model.ItemListDto;
 import com.akletini.shoppinglist.ui.itemlist.ItemListHomeActivity;
 import com.akletini.shoppinglist.utils.HTTPUtils;
@@ -21,9 +20,7 @@ import com.google.gson.Gson;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 public class RemoteItemListRequest {
 
@@ -42,7 +39,6 @@ public class RemoteItemListRequest {
             if (response != null) {
                 final Gson gson = new Gson();
                 responseObject = gson.fromJson(response.toString(), ItemListDto.class);
-                responseObject.setItemAmountMap(createItemAmountMap(responseObject));
                 ItemListDataStore itemListDataStore = (ItemListDataStore) DataStoreRepository.getDataStore(ItemListDto.class);
                 itemListDataStore.addElement(responseObject);
                 final Intent intent = new Intent(context, ItemListHomeActivity.class);
@@ -146,15 +142,5 @@ public class RemoteItemListRequest {
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         queue.add(request);
     }
-
-    private static Map<ItemDto, Integer> createItemAmountMap(ItemListDto itemList) {
-        Map<ItemDto, Integer> map = new LinkedHashMap<>();
-        List<ItemDto> items = itemList.getItemList();
-        List<Integer> itemAmounts = itemList.getItemAmounts();
-
-        for (int i = 0; i < Math.min(items.size(), itemAmounts.size()); i++) {
-            map.put(items.get(i), itemAmounts.get(i));
-        }
-        return map;
-    }
+    
 }

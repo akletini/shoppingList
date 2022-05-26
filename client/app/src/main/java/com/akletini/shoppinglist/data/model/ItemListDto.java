@@ -2,29 +2,24 @@ package com.akletini.shoppinglist.data.model;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.util.LinkedHashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 public class ItemListDto {
 
     @SerializedName("id")
     private Long id;
-    @SerializedName("itemList")
-    private List<ItemDto> itemList;
-    @SerializedName("itemAmounts")
-    private List<Integer> itemAmounts;
     @SerializedName("name")
     private String name;
-    @SerializedName("itemAmountMap")
-    private Map<ItemDto, Integer> itemAmountMap;
     @SerializedName("market")
     private MarketDto market;
     @SerializedName("creationDate")
     private String creationDate;
     @SerializedName("owner")
     private UserDto owner;
+    @SerializedName("entries")
+    private List<ItemListEntryDto> entries;
 
     public String getName() {
         return name;
@@ -34,15 +29,13 @@ public class ItemListDto {
         this.name = name;
     }
 
-    public ItemListDto(Long id, List<ItemDto> itemList, List<Integer> itemAmounts, Map<ItemDto, Integer> itemAmountMap, MarketDto market, String name, String creationDate, UserDto owner) {
+    public ItemListDto(Long id, MarketDto market, String name, String creationDate, UserDto owner, List<ItemListEntryDto> entries) {
         this.id = id;
-        this.itemList = itemList;
-        this.itemAmounts = itemAmounts;
         this.name = name;
-        this.itemAmountMap = itemAmountMap;
         this.market = market;
         this.creationDate = creationDate;
         this.owner = owner;
+        this.entries = entries;
     }
 
     public ItemListDto() {
@@ -54,14 +47,6 @@ public class ItemListDto {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public List<ItemDto> getItemList() {
-        return itemList;
-    }
-
-    public void setItemList(List<ItemDto> itemList) {
-        this.itemList = itemList;
     }
 
     public MarketDto getMarket() {
@@ -80,38 +65,54 @@ public class ItemListDto {
         this.creationDate = creationDate;
     }
 
-    public Map<ItemDto, Integer> getItemAmountMap() {
-        return itemAmountMap;
+    public List<ItemListEntryDto> getEntries() {
+        return entries;
     }
 
-    public void setItemAmountMap(Map<ItemDto, Integer> itemAmountMap) {
-        this.itemAmountMap = itemAmountMap;
+    public void setEntries(List<ItemListEntryDto> entries) {
+        this.entries = entries;
     }
 
     public UserDto getOwner() {
         return owner;
     }
 
-    public List<Integer> getItemAmounts() {
-        return itemAmounts;
-    }
-
-    public void setItemAmounts(List<Integer> itemAmounts) {
-        this.itemAmounts = itemAmounts;
-    }
 
     public void setOwner(UserDto owner) {
         this.owner = owner;
     }
 
+    public List<ItemDto> getItems() {
+        List<ItemDto> resultList = new ArrayList<>();
+        for (ItemListEntryDto entry : entries) {
+            resultList.add(entry.getItem());
+        }
+        return resultList;
+    }
+
+    public void updateAmounts(List<ItemListEntryDto> entries) {
+        for (ItemListEntryDto entry : entries) {
+            entry.getItem().setAmount(entry.getAmount());
+        }
+    }
+
+    public List<ItemListEntryDto> createEntries(List<ItemDto> items, List<Integer> amounts) {
+        int count = items.size();
+        List<ItemListEntryDto> entries = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            ItemListEntryDto entry = new ItemListEntryDto();
+            entry.setItem(items.get(i));
+            entry.setAmount(amounts.get(i));
+            entry.setPosition(i);
+            entries.add(entry);
+        }
+        return entries;
+    }
+
     public ItemListDto copy() {
         ItemListDto copy = new ItemListDto();
         copy.setId(id);
-        copy.setItemList(itemList.stream().map(ItemDto::copy).collect(Collectors.toList()));
-        copy.setItemAmounts(itemAmounts);
-        Map<ItemDto, Integer> copyMap = new LinkedHashMap<>();
-        itemAmountMap.forEach((itemDto, integer) -> copyMap.put(itemDto.copy(), integer));
-        copy.setItemAmountMap(copyMap);
+        copy.setEntries(entries.stream().map(ItemListEntryDto::copy).collect(Collectors.toList()));
         copy.setName(name);
         copy.setMarket(market.copy());
         copy.setOwner(owner.copy());

@@ -48,6 +48,7 @@ public class ItemListCreateDetailsActivity extends AppCompatActivity implements 
     Button submitButton;
     RecyclerView recyclerView;
     List<ItemDto> selectedItems;
+    TextView itemListName;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -55,6 +56,7 @@ public class ItemListCreateDetailsActivity extends AppCompatActivity implements 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_list_create_details);
 
+        itemListName = findViewById(R.id.itemListName);
         final DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
         Toolbar toolbar = findViewById(R.id.toolbar);
         submitButton = findViewById(R.id.itemListSubmit);
@@ -64,17 +66,27 @@ public class ItemListCreateDetailsActivity extends AppCompatActivity implements 
         navigationView.getMenu().findItem(R.id.menuItemItemlist).setEnabled(false);
         setDrawerMenuUsername();
         setLogoutListener();
+        initMarkets();
 
-        List<ItemDto> selectedItems = new ArrayList<>();
+        selectedItems = new ArrayList<>();
         String callerClass = getIntent().getStringExtra("caller");
         if (callerClass != null && (callerClass.equals("ItemListCreateActivity"))) {
             selectedItems = (List<ItemDto>) getIntent().getExtras().get("selection");
+        } else if (callerClass != null && (callerClass.equals("ItemListHomeActivity"))) {
+            Long itemListId = getIntent().getExtras().getLong("item_id");
+            ItemListDto itemList = (ItemListDto) DataStoreRepository.
+                    getDataStore(ItemListDto.class).getElementById(itemListId);
+            itemList.updateAmounts(itemList.getEntries());
+            selectedItems = itemList.getItems();
+            ArrayAdapter<MarketDto> adapter = (ArrayAdapter<MarketDto>) marketSpinner.getAdapter();
+            int position = adapter.getPosition(itemList.getMarket());
+            marketSpinner.setSelection(position);
+            itemListName.setText(itemList.getName());
         }
         final List<ItemDto> finalSelectedItems = selectedItems;
         submitButton.setOnClickListener(view -> {
             setUpCreateRequest(finalSelectedItems);
         });
-        initMarkets();
 
         recyclerView = findViewById(R.id.item_list_recycler_view);
         final List<ItemDto> copyList = new ArrayList<>();
@@ -100,7 +112,6 @@ public class ItemListCreateDetailsActivity extends AppCompatActivity implements 
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void setUpCreateRequest(List<ItemDto> selectedItems) {
-        TextView itemListName = findViewById(R.id.itemListName);
         ItemListDto itemListDto = new ItemListDto();
         itemListDto.setOwner(LoggedInUserSingleton.getInstance().getCurrentUser());
         itemListDto.setCreationDate(LocalDateTime.now().toString());
@@ -109,8 +120,7 @@ public class ItemListCreateDetailsActivity extends AppCompatActivity implements 
             final ItemListCreateAdapter.ViewHolder holder = (ItemListCreateAdapter.ViewHolder) recyclerView.getChildViewHolder(recyclerView.getChildAt(i));
             selectedItems.get(i).setAmount(Integer.parseInt(holder.itemAmount.getText().toString()));
         }
-        itemListDto.setItemList(selectedItems);
-        itemListDto.setItemAmounts(getNewItemAmounts(selectedItems));
+        itemListDto.setEntries(itemListDto.createEntries(selectedItems, getNewItemAmounts(selectedItems)));
         itemListDto.setMarket((MarketDto) marketSpinner.getSelectedItem());
         itemListDto.setName(ViewUtils.textViewToString(itemListName));
         try {

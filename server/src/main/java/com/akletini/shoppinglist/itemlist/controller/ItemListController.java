@@ -1,16 +1,15 @@
 package com.akletini.shoppinglist.itemlist.controller;
 
-import com.akletini.shoppinglist.item.entity.Item;
+import com.akletini.shoppinglist.itemlist.ItemListEntryRepository;
 import com.akletini.shoppinglist.itemlist.ItemListRepository;
 import com.akletini.shoppinglist.itemlist.entity.ItemList;
+import com.akletini.shoppinglist.itemlist.entity.ItemListEntry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -19,6 +18,9 @@ public class ItemListController {
 
     @Autowired
     ItemListRepository itemListRepository;
+
+    @Autowired
+    ItemListEntryRepository itemListEntryRepository;
 
     @GetMapping(value = "/getItemList/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ItemList> getItemListById(@PathVariable Long id) {
@@ -32,7 +34,8 @@ public class ItemListController {
 
     @GetMapping(value = "/getItemLists", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Iterable<ItemList>> getItemLists() {
-        return ResponseEntity.ok().body(itemListRepository.findAll());
+        List<ItemList> itemLists = (List<ItemList>) itemListRepository.findAll();
+        return ResponseEntity.ok().body(itemLists);
     }
 
     @PostMapping(value = "/createItemList", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -40,7 +43,9 @@ public class ItemListController {
         if (itemList == null) {
             return ResponseEntity.badRequest().body(null);
         }
-        itemList.setItemAmountMap(createItemAmountMap(itemList));
+        List<ItemListEntry> entries = itemList.getEntries();
+        List<ItemListEntry> savedEntries = (List<ItemListEntry>) itemListEntryRepository.saveAll(entries);
+        itemList.setEntries(savedEntries);
         ItemList savedItemList = itemListRepository.save(itemList);
         return ResponseEntity.ok().body(savedItemList);
     }
@@ -73,14 +78,4 @@ public class ItemListController {
         return success ? ResponseEntity.ok().body("Success") : ResponseEntity.badRequest().body("Deletion failed");
     }
 
-    private Map<Item, Integer> createItemAmountMap(ItemList itemList) {
-        Map<Item, Integer> map = new LinkedHashMap<>();
-        List<Item> items = itemList.getItemList();
-        List<Integer> itemAmounts = itemList.getItemAmounts();
-
-        for (int i = 0; i < Math.min(items.size(), itemAmounts.size()); i++) {
-            map.put(items.get(i), itemAmounts.get(i));
-        }
-        return map;
-    }
 }
