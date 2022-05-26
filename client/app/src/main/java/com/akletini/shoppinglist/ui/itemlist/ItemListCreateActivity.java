@@ -21,6 +21,7 @@ import com.akletini.shoppinglist.data.datastore.DataStoreRepository;
 import com.akletini.shoppinglist.data.datastore.ItemDataStore;
 import com.akletini.shoppinglist.data.datastore.LoggedInUserSingleton;
 import com.akletini.shoppinglist.data.model.ItemDto;
+import com.akletini.shoppinglist.data.model.ItemListDto;
 import com.akletini.shoppinglist.request.RemoteUserRequest;
 import com.akletini.shoppinglist.ui.item.ItemAdapter;
 import com.akletini.shoppinglist.ui.item.ItemHomeActivity;
@@ -41,6 +42,10 @@ public class ItemListCreateActivity extends AppCompatActivity implements ItemAda
     TextView toolbarTextView;
     private ArrayList<ItemDto> selectedItems;
 
+    private boolean isExisting;
+    private ItemListDto currentItemList;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,13 +61,7 @@ public class ItemListCreateActivity extends AppCompatActivity implements ItemAda
         navigationView.getMenu().findItem(R.id.menuItemArticles).setEnabled(false);
         setDrawerMenuUsername();
         setLogoutListener();
-        FloatingActionButton addRouteButton = findViewById(R.id.addItemButton);
-        addRouteButton.setOnClickListener(view -> {
-            Intent intent = new Intent(this, ItemListCreateDetailsActivity.class);
-            intent.putExtra("selection", selectedItems);
-            intent.putExtra("caller", "ItemListCreateActivity");
-            startActivity(intent);
-        });
+
         ItemDataStore dataStore = (ItemDataStore) DataStoreRepository.getDataStore(ItemDto.class);
         RecyclerView recyclerView = findViewById(R.id.item_recycler_view);
         final List<ItemDto> copyList = new ArrayList<>();
@@ -71,6 +70,28 @@ public class ItemListCreateActivity extends AppCompatActivity implements ItemAda
         }
 
         itemAdapter = new ItemAdapter(copyList, this);
+
+        String callerClass = getIntent().getStringExtra("caller");
+        if (callerClass != null && (callerClass.equals("ItemListCreateDetailsActivity"))) {
+            selectedItems = (ArrayList<ItemDto>) getIntent().getExtras().get("selection");
+            long currentItemListId = getIntent().getExtras().getLong("currentItemList");
+            currentItemList = (ItemListDto) DataStoreRepository.getDataStore(ItemListDto.class).getElementById(currentItemListId);
+            itemAdapter = new ItemAdapter(selectedItems, copyList, this);
+            itemAdapter.setSelectedPositions(itemAdapter.matchSelectedPositions(selectedItems));
+            isExisting = true;
+        }
+
+        FloatingActionButton addRouteButton = findViewById(R.id.addItemButton);
+        addRouteButton.setOnClickListener(view -> {
+            Intent intent = new Intent(this, ItemListCreateDetailsActivity.class);
+            intent.putExtra("selection", selectedItems);
+            if (isExisting) {
+                intent.putExtra("item_id", currentItemList.getId());
+                intent.putExtra("update", true);
+            }
+            intent.putExtra("caller", "ItemListCreateActivity");
+            startActivity(intent);
+        });
 
         recyclerView.setAdapter(itemAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));

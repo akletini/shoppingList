@@ -59,6 +59,8 @@ public class ItemListController {
         ItemList updateditemList = new ItemList();
         Optional<ItemList> saveditemListOptional = itemListRepository.findById(itemList.getId());
         if (saveditemListOptional.isPresent()) {
+            List<ItemListEntry> itemListEntries = (List<ItemListEntry>) itemListEntryRepository.saveAll(itemList.getEntries());
+            itemList.setEntries(itemListEntries);
             updateditemList = itemListRepository.save(itemList);
             success = true;
         }

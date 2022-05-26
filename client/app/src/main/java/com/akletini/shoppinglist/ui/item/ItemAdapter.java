@@ -27,6 +27,7 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
     private final OnItemClickListener onItemClickListener;
     private int selectedPos = RecyclerView.NO_POSITION;
     private List<Integer> selectedPositions;
+    private List<ItemDto> selectedItems = new ArrayList<>();
 
     public ItemAdapter(List<ItemDto> items, OnItemClickListener onItemClickListener) {
         this.items = items;
@@ -34,6 +35,17 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
         itemsCopy = new ArrayList<>();
         itemsCopy.addAll(items);
         selectedPositions = new ArrayList<>();
+        items.sort(comparing(ItemDto::getName));
+    }
+
+    public ItemAdapter(List<ItemDto> selection, List<ItemDto> items, OnItemClickListener onItemClickListener) {
+        this.items = items;
+        this.onItemClickListener = onItemClickListener;
+        itemsCopy = new ArrayList<>();
+        itemsCopy.addAll(items);
+        this.selectedItems = selection;
+        selectedPositions = new ArrayList<>();
+        items.sort(comparing(ItemDto::getName));
     }
 
     @NonNull
@@ -48,8 +60,6 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ItemAdapter.ViewHolder holder, int position) {
-        // this may be slow to put here
-        items.sort(comparing(ItemDto::getName));
         ItemDto itemDto = items.get(position);
         View itemView = holder.itemView;
 
@@ -70,7 +80,14 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
             itemView.setBackgroundColor(Color.LTGRAY);
         }
 
+
     }
+
+    @Override
+    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+        selectedPositions.addAll(matchSelectedPositions(selectedItems));
+    }
+
 
     @Override
     public int getItemCount() {
@@ -95,6 +112,26 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
 
     public List<ItemDto> getItems() {
         return items;
+    }
+
+    public List<Integer> getSelectedPositions() {
+        return selectedPositions;
+    }
+
+    public void setSelectedPositions(List<Integer> selectedPositions) {
+        this.selectedPositions = selectedPositions;
+    }
+
+    public List<Integer> matchSelectedPositions(List<ItemDto> itemSelection) {
+        List<Integer> positions = new ArrayList<>();
+        for (int i = 0; i < items.size(); i++) {
+            for (ItemDto item : itemSelection) {
+                if (item.equals(items.get(i))) {
+                    positions.add(i);
+                }
+            }
+        }
+        return positions;
     }
 
 

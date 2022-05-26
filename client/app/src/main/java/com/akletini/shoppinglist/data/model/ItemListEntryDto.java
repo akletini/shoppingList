@@ -57,6 +57,7 @@ public class ItemListEntryDto {
 
     public ItemListEntryDto copy() {
         ItemListEntryDto copy = new ItemListEntryDto();
+        copy.setId(id);
         copy.setAmount(amount);
         copy.setItem(item.copy());
         copy.setPosition(position);

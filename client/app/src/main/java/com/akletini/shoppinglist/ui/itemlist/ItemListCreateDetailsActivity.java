@@ -25,6 +25,7 @@ import com.akletini.shoppinglist.data.datastore.DataStoreRepository;
 import com.akletini.shoppinglist.data.datastore.LoggedInUserSingleton;
 import com.akletini.shoppinglist.data.model.ItemDto;
 import com.akletini.shoppinglist.data.model.ItemListDto;
+import com.akletini.shoppinglist.data.model.ItemListEntryDto;
 import com.akletini.shoppinglist.data.model.MarketDto;
 import com.akletini.shoppinglist.request.RemoteItemListRequest;
 import com.akletini.shoppinglist.request.RemoteUserRequest;
@@ -32,6 +33,7 @@ import com.akletini.shoppinglist.ui.item.ItemHomeActivity;
 import com.akletini.shoppinglist.ui.market.MarketHomeActivity;
 import com.akletini.shoppinglist.ui.route.RouteHomeActivity;
 import com.akletini.shoppinglist.utils.ViewUtils;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 
 import org.json.JSONException;
@@ -47,8 +49,11 @@ public class ItemListCreateDetailsActivity extends AppCompatActivity implements 
     ItemListCreateAdapter itemAdapter;
     Button submitButton;
     RecyclerView recyclerView;
-    List<ItemDto> selectedItems;
+    ArrayList<ItemDto> selectedItems;
     TextView itemListName;
+
+    boolean isExisting = false;
+    ItemListDto currentItemList;
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -56,6 +61,7 @@ public class ItemListCreateDetailsActivity extends AppCompatActivity implements 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_list_create_details);
 
+        selectedItems = new ArrayList<>();
         itemListName = findViewById(R.id.itemListName);
         final DrawerLayout drawerLayout = findViewById(R.id.drawer_layout);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -68,24 +74,47 @@ public class ItemListCreateDetailsActivity extends AppCompatActivity implements 
         setLogoutListener();
         initMarkets();
 
-        selectedItems = new ArrayList<>();
+        Bundle extras = getIntent().getExtras();
+        boolean isSelectionUpdate = extras.get("item_id") != null && extras.getBoolean("update");
         String callerClass = getIntent().getStringExtra("caller");
-        if (callerClass != null && (callerClass.equals("ItemListCreateActivity"))) {
-            selectedItems = (List<ItemDto>) getIntent().getExtras().get("selection");
-        } else if (callerClass != null && (callerClass.equals("ItemListHomeActivity"))) {
-            Long itemListId = getIntent().getExtras().getLong("item_id");
-            ItemListDto itemList = (ItemListDto) DataStoreRepository.
+        if (callerClass != null && (callerClass.equals("ItemListCreateActivity"))
+                && !isSelectionUpdate) {
+            selectedItems = (ArrayList<ItemDto>) extras.get("selection");
+        } else if ((callerClass != null && (callerClass.equals("ItemListHomeActivity")))
+                || isSelectionUpdate) {
+            Long itemListId = extras.getLong("item_id");
+            currentItemList = (ItemListDto) DataStoreRepository.
                     getDataStore(ItemListDto.class).getElementById(itemListId);
-            itemList.updateAmounts(itemList.getEntries());
-            selectedItems = itemList.getItems();
+            currentItemList.updateAmounts(currentItemList.getEntries());
+            selectedItems = (ArrayList<ItemDto>) currentItemList.getItems();
+            if (isSelectionUpdate) {
+                selectedItems = (ArrayList<ItemDto>) extras.get("selection");
+                List<ItemListEntryDto> entries = currentItemList.updateEntries(currentItemList.getEntries(), selectedItems, getNewItemAmounts(selectedItems));
+                currentItemList.setEntries(entries);
+            }
             ArrayAdapter<MarketDto> adapter = (ArrayAdapter<MarketDto>) marketSpinner.getAdapter();
-            int position = adapter.getPosition(itemList.getMarket());
+            int position = adapter.getPosition(currentItemList.getMarket());
             marketSpinner.setSelection(position);
-            itemListName.setText(itemList.getName());
+            itemListName.setText(currentItemList.getName());
+            isExisting = true;
         }
+
+        FloatingActionButton actionButton = findViewById(R.id.addItemsButton);
+        actionButton.setOnClickListener(view -> {
+            Intent intent = new Intent(this, ItemListCreateActivity.class);
+            intent.putExtra("caller", "ItemListCreateDetailsActivity");
+            intent.putExtra("currentItemList", currentItemList.getId());
+            intent.putExtra("selection", selectedItems);
+            startActivity(intent);
+        });
+
         final List<ItemDto> finalSelectedItems = selectedItems;
         submitButton.setOnClickListener(view -> {
-            setUpCreateRequest(finalSelectedItems);
+            if (!isExisting) {
+                setUpCreateRequest(finalSelectedItems);
+            } else {
+                setUpUpdateRequest(finalSelectedItems);
+            }
         });
 
         recyclerView = findViewById(R.id.item_list_recycler_view);
@@ -99,6 +128,22 @@ public class ItemListCreateDetailsActivity extends AppCompatActivity implements 
         recyclerView.setAdapter(itemAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+    }
+
+    private void setUpUpdateRequest(List<ItemDto> finalSelectedItems) {
+        ItemListDto itemList = currentItemList.copy();
+        for (int childCount = recyclerView.getChildCount(), i = 0; i < childCount; ++i) {
+            final ItemListCreateAdapter.ViewHolder holder = (ItemListCreateAdapter.ViewHolder) recyclerView.getChildViewHolder(recyclerView.getChildAt(i));
+            selectedItems.get(i).setAmount(Integer.parseInt(holder.itemAmount.getText().toString()));
+        }
+        itemList.setEntries(itemList.updateEntries(itemList.getEntries(), selectedItems, getNewItemAmounts(selectedItems)));
+        itemList.setMarket((MarketDto) marketSpinner.getSelectedItem());
+        itemList.setName(ViewUtils.textViewToString(itemListName));
+        try {
+            RemoteItemListRequest.remoteMarketModifyRequest(this, itemList, ItemListHomeActivity.class, true);
+        } catch (JSONException e) {
+            Toast.makeText(this, "Failed to save Item list", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void initMarkets() {

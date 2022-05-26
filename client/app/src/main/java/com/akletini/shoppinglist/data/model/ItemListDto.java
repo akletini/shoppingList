@@ -109,6 +109,21 @@ public class ItemListDto {
         return entries;
     }
 
+    public List<ItemListEntryDto> updateEntries(List<ItemListEntryDto> entries, List<ItemDto> items, List<Integer> amounts) {
+        int count = items.size();
+        List<ItemListEntryDto> updatedEntries = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            boolean isOOB = i >= entries.size();
+            ItemListEntryDto entry = new ItemListEntryDto();
+            entry.setId(!isOOB ? entries.get(i).getId() : null);
+            entry.setItem(items.get(i));
+            entry.setAmount(amounts.get(i));
+            entry.setPosition(i);
+            updatedEntries.add(entry);
+        }
+        return updatedEntries;
+    }
+
     public ItemListDto copy() {
         ItemListDto copy = new ItemListDto();
         copy.setId(id);
